@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import "package:flutter/material.dart";
 import 'package:file_picker/file_picker.dart';
+import 'package:pacers_portal/admin_home.dart';
 
 class Notice extends StatefulWidget {
   const Notice({super.key});
@@ -16,6 +17,16 @@ class _NoticeState extends State<Notice> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: ((context) => AdminHome())));
+              },
+              icon: Icon(Icons.arrow_back_ios))
+        ],
+      ),
       body: Column(
         children: [
           Center(
@@ -55,9 +66,7 @@ class _NoticeState extends State<Notice> {
       return;
     }
 
-    String? outputFile = await FilePicker.platform.saveFile(
-      fileName: "output-file.pdf"
-    );  
-    
+    String? outputFile =
+        await FilePicker.platform.saveFile(fileName: "output-file.pdf");
   }
 }

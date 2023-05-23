@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'otp_verification.dart';
 
 void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false, home: const MyApp()));
+  runApp(MaterialApp(debugShowCheckedModeBanner: false, home: const MyApp()));
 }
 
 class MyApp extends StatefulWidget {
