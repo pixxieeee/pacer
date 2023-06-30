@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pacers_portal/admin_home.dart';
+import 'package:pacers_portal/common/dashboard/admin_home.dart';
+
 import 'package:pacers_portal/components/drawer.dart';
 
 class AddEvent extends StatefulWidget {

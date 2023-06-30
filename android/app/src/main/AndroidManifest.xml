@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.pacers_portal">
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="pacers_portal"
         android:name="${applicationName}"

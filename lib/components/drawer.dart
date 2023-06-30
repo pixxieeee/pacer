@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 //import 'package:pacers_portal/add_events.dart';
 import 'package:pacers_portal/all_events.dart';
 import 'package:pacers_portal/notice.dart';
+import 'package:pacers_portal/student.dart';
 import 'package:pacers_portal/teacher.dart';
 
 class drawer extends StatefulWidget {
@@ -18,24 +19,18 @@ class _drawerState extends State<drawer> {
       child: ListView(
         children: [
           UserAccountsDrawerHeader(
-            accountName: Text('Oflutter.com'),
-            accountEmail: Text('example@gmail.com'),
-            currentAccountPicture: CircleAvatar(
-              child: ClipOval(
-                child: Image.network(
-                  'https://oflutter.com/wp-content/uploads/2021/02/girl-profile.png',
-                  fit: BoxFit.cover,
-                  width: 90,
-                  height: 90,
-                ),
+            accountName: Text(
+              'Priyanka Talwar',
+              style: TextStyle(
+                color: Color.fromARGB(255, 2, 101, 251),
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
               ),
             ),
+            accountEmail: Text('priyanka.talwarb@gmail.com'),
             decoration: BoxDecoration(
-              color: Colors.blue,
-              image: DecorationImage(
-                  fit: BoxFit.fill,
-                  image: NetworkImage(
-                      'https://oflutter.com/wp-content/uploads/2021/02/profile-bg3.jpg')),
+              color: Color.fromARGB(255, 2, 101, 251),
+              
             ),
           ),
           ListTile(
@@ -53,7 +48,10 @@ class _drawerState extends State<drawer> {
           ),
           ListTile(
             leading: Icon(Icons.school_outlined),
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => Student()));
+            },
             title: Text("Student"),
           ),
           ListTile(
@@ -72,11 +70,24 @@ class _drawerState extends State<drawer> {
           ListTile(
             leading: Icon(Icons.event_note),
             onTap: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: ((context) => AllEvents())));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: ((context) => AllEvents())));
             },
             title: Text("Event"),
-          )
+          ),
+           Padding(
+             padding: const EdgeInsets.only(top: 200),
+             child: Align(
+              alignment: Alignment.bottomLeft,
+               child: Image.asset(
+                  "assets/images/test.jpg",
+                  fit: BoxFit.fill,
+                  height: 250,
+                  width: double.infinity,
+                ),
+             ),
+           ),
+
         ],
       ),
     );

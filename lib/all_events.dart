@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pacers_portal/add_events.dart';
 import 'package:pacers_portal/components/drawer.dart';
+import 'package:pacers_portal/event_form.dart';
 
 class AllEvents extends StatefulWidget {
   const AllEvents({super.key});
@@ -13,11 +15,25 @@ class _AllEventsState extends State<AllEvents> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      floatingActionButton: FloatingActionButton(onPressed: (){
+          Navigator.push(context,
+                    MaterialPageRoute(builder: ((context) => EventForm())));
+      },
+      child: Icon(Icons.add),
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white, // Button padding
+                ),
+      appBar: AppBar(
+        toolbarHeight: 106,
+        backgroundColor: Color.fromARGB(255, 2, 101, 251)
+      ),
       drawer: drawer(),
       body: Padding(
+
         padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 25),
         child: Container(
+          height: double.infinity,
+          width: double.infinity,
           child: PaginatedDataTable(
             source: _data,
             columns: [
@@ -57,6 +73,7 @@ class MyData extends DataTableSource {
       DataCell(Text(_data[index]["description"].toString())),
     ]);
   }
+  
 
   @override
   // TODO: implement isRowCountApproximate

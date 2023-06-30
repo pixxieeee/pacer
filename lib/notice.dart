@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import "package:flutter/material.dart";
 import 'package:file_picker/file_picker.dart';
-import 'package:pacers_portal/admin_home.dart';
+import 'package:pacers_portal/common/dashboard/admin_home.dart';
+
+import 'package:pacers_portal/notice_form.dart';
 
 class Notice extends StatefulWidget {
   const Notice({super.key});
@@ -17,7 +19,22 @@ class _NoticeState extends State<Notice> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(context,
+                    MaterialPageRoute(builder: ((context) => NoticeForm())));
+        },
+        child: Icon(Icons.add),
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white, // Button padding
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(20), // Button border radius
+                ),
+      ),
       appBar: AppBar(
+         toolbarHeight: 106,
+        backgroundColor: Color.fromARGB(255, 2, 101, 251),
         actions: [
           IconButton(
               onPressed: () {
@@ -29,13 +46,13 @@ class _NoticeState extends State<Notice> {
       ),
       body: Column(
         children: [
-          Center(
-              child: IconButton(
-                  onPressed: () {
-                    _pickFile();
-                  },
-                  icon: Icon(Icons.file_present))),
-          Text(_fileText)
+          IconButton(
+              onPressed: () {
+                _pickFile();
+              },
+              icon: Icon(Icons.file_present)),
+          Text(_fileText),
+          
         ],
       ),
     );
