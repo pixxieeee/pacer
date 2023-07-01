@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:pacers_portal/common/dashboard/admin_home.dart';
 //import 'package:pacers_portal/dash/dashboard/admin_home.dart';
 import 'package:pacers_portal/components/drawer.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 const List<String> dept = <String>['Computer', 'Mechanical', 'ETC', 'IT'];
 
@@ -13,6 +15,15 @@ class TeacherForm extends StatefulWidget {
 }
 
 class _TeacherFormState extends State<TeacherForm> {
+  TextEditingController fname = TextEditingController();
+  TextEditingController lname = TextEditingController();
+  TextEditingController dept = TextEditingController();
+  TextEditingController gender = TextEditingController();
+  TextEditingController dob = TextEditingController();
+  TextEditingController phone = TextEditingController();
+  TextEditingController email = TextEditingController();
+  TextEditingController add1 = TextEditingController();
+  TextEditingController add2 = TextEditingController();
   String? dropdownValue;
   @override
   Widget build(BuildContext context) {
@@ -84,6 +95,7 @@ class _TeacherFormState extends State<TeacherForm> {
                     height: 56,
                     width: 349,
                     child: TextFormField(
+                      controller: fname,
                       maxLength: 25,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
@@ -97,6 +109,7 @@ class _TeacherFormState extends State<TeacherForm> {
                     height: 56,
                     width: 349,
                     child: TextFormField(
+                      controller: lname,
                       maxLength: 75,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
@@ -148,6 +161,7 @@ class _TeacherFormState extends State<TeacherForm> {
                     height: 56,
                     width: 349,
                     child: TextFormField(
+                      controller: dept,
                       maxLength: 25,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
@@ -161,6 +175,7 @@ class _TeacherFormState extends State<TeacherForm> {
                     height: 56,
                     width: 349,
                     child: TextFormField(
+                      controller: gender,
                       maxLength: 75,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
@@ -174,6 +189,7 @@ class _TeacherFormState extends State<TeacherForm> {
                     height: 56,
                     width: 349,
                     child: TextFormField(
+                      controller: dob,
                       maxLength: 75,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
@@ -224,6 +240,7 @@ class _TeacherFormState extends State<TeacherForm> {
                     height: 46,
                     width: 349,
                     child: TextFormField(
+                      controller: phone,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                       ),
@@ -236,6 +253,7 @@ class _TeacherFormState extends State<TeacherForm> {
                     height: 46,
                     width: 349,
                     child: TextFormField(
+                      controller: email,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                       ),
@@ -276,6 +294,7 @@ class _TeacherFormState extends State<TeacherForm> {
                     height: 46,
                     width: 349,
                     child: TextFormField(
+                      controller: add1,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                       ),
@@ -288,6 +307,7 @@ class _TeacherFormState extends State<TeacherForm> {
                     height: 46,
                     width: 349,
                     child: TextFormField(
+                      controller: add2,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                       ),
@@ -296,29 +316,58 @@ class _TeacherFormState extends State<TeacherForm> {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 25, left: 19),
-              child: Container(
-                height: 30,
-                width: 135,
-                child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      primary:
-                          Color.fromARGB(255, 255, 118, 67), // Background color
-                      onPrimary: Colors.white, // Text color
-                      padding: EdgeInsets.all(16), // Button padding
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(20), // Button border radius
-                      ),
-                    ),
-                    child: Text("SUBMIT")),
-              ),
-            )
+            ElevatedButton(
+                onPressed: () {
+                  print("added");
+                  addTeacher();
+                },
+                child: Text("add"))
+            // Padding(
+            //   padding: const EdgeInsets.only(top: 25, left: 19),
+            //   child: Container(
+            //     height: 30,
+            //     width: 135,
+            //     child: ElevatedButton(
+            //         onPressed: () {
+            //           print("hello");
+            //           addTeacher();
+            //         },
+            //         style: ElevatedButton.styleFrom(
+            //           primary:
+            //               Color.fromARGB(255, 255, 118, 67), // Background color
+            //           onPrimary: Colors.white, // Text color
+            //           padding: EdgeInsets.all(16), // Button padding
+            //           shape: RoundedRectangleBorder(
+            //             borderRadius:
+            //                 BorderRadius.circular(20), // Button border radius
+            //           ),
+            //         ),
+            //         child: Text("SUBMIT")),
+            //   ),
+            // )
           ],
         ),
       ),
     );
+  }
+
+  void addTeacher() async {
+    var url = "https://pacerlearninghub.onrender.com/teacherProfile";
+    var data = {
+      'name': fname.text,
+      'phoneno': phone.text,
+      'gender': gender.text,
+      'birthdate': dob.text,
+      'email': email.text,
+      'address': add1.text
+    };
+    var bodyy = json.encode(data);
+    var urlParse = Uri.parse(url);
+    var response = await http.post(
+      urlParse,
+      body: bodyy,
+    );
+    var dataa = jsonDecode(response.body);
+    print(dataa);
   }
 }
