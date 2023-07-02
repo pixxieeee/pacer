@@ -316,35 +316,28 @@ class _TeacherFormState extends State<TeacherForm> {
                 ],
               ),
             ),
-            ElevatedButton(
-                onPressed: () {
-                  print("added");
-                  addTeacher();
-                },
-                child: Text("add"))
-            // Padding(
-            //   padding: const EdgeInsets.only(top: 25, left: 19),
-            //   child: Container(
-            //     height: 30,
-            //     width: 135,
-            //     child: ElevatedButton(
-            //         onPressed: () {
-            //           print("hello");
-            //           addTeacher();
-            //         },
-            //         style: ElevatedButton.styleFrom(
-            //           primary:
-            //               Color.fromARGB(255, 255, 118, 67), // Background color
-            //           onPrimary: Colors.white, // Text color
-            //           padding: EdgeInsets.all(16), // Button padding
-            //           shape: RoundedRectangleBorder(
-            //             borderRadius:
-            //                 BorderRadius.circular(20), // Button border radius
-            //           ),
-            //         ),
-            //         child: Text("SUBMIT")),
-            //   ),
-            // )
+            Padding(
+              padding: const EdgeInsets.only(top: 25, left: 19),
+              child: Container(
+                height: 30,
+                width: 135,
+                child: ElevatedButton(
+                    onPressed: () {
+                      addTeacher();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary:
+                          Color.fromARGB(255, 255, 118, 67), // Background color
+                      onPrimary: Colors.white, // Text color
+                      padding: EdgeInsets.all(16), // Button padding
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(20), // Button border radius
+                      ),
+                    ),
+                    child: Text("SUBMIT")),
+              ),
+            )
           ],
         ),
       ),

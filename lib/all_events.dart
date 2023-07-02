@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pacers_portal/add_events.dart';
 import 'package:pacers_portal/components/drawer.dart';
 import 'package:pacers_portal/event_form.dart';
 

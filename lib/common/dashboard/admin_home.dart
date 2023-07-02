@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pacers_portal/common/dashboard/calendar_widget.dart';
-import 'package:pacers_portal/common/dashboard/event_display_widget.dart';
 import 'package:pacers_portal/common/dashboard/hod_details.dart';
 import 'package:pacers_portal/common/dashboard/profile_widget.dart';
-import 'package:pacers_portal/common/display.dart';
-
 import 'package:pacers_portal/components/drawer.dart';
 import 'package:pacers_portal/main.dart';
 

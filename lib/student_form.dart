@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pacers_portal/common/dashboard/admin_home.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:pacers_portal/components/drawer.dart';
 
 const List<String> dept = <String>['Computer', 'Mechanical', 'ETC', 'IT'];
@@ -13,12 +14,13 @@ class StudentForm extends StatefulWidget {
 }
 
 class _StudentFormState extends State<StudentForm> {
+  TextEditingController name = TextEditingController();
   String? dropdownValue;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-         toolbarHeight: 106,
+        toolbarHeight: 106,
         backgroundColor: Color.fromARGB(255, 2, 101, 251),
         title: Text("Pacers Learning Hub"),
         actions: [
@@ -31,29 +33,32 @@ class _StudentFormState extends State<StudentForm> {
         ],
       ),
       drawer: drawer(),
-      body: Column(
-        children:  [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 42, left: 19),
-              child: Text("NEW STUDENT",
-                  style: TextStyle(fontSize: 36, fontWeight: FontWeight.w600)),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 42, left: 19),
+                child: Text("NEW STUDENT",
+                    style:
+                        TextStyle(fontSize: 36, fontWeight: FontWeight.w600)),
+              ),
             ),
-          ),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 10, left: 19),
-              child: Text("BASIC INFORMATION",
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 10, left: 19),
+                child: Text("BASIC INFORMATION",
+                    style:
+                        TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+              ),
             ),
-          ),
-        Padding(
-          padding: const EdgeInsets.only(top: 20 , left: 19),
-          child: Row(
-            children: [
-              SizedBox(
+            Padding(
+              padding: const EdgeInsets.only(top: 20, left: 19),
+              child: Row(
+                children: [
+                  SizedBox(
                     height: 25,
                     width: 263,
                     child: Text("FIRSTNAME",
@@ -70,45 +75,45 @@ class _StudentFormState extends State<StudentForm> {
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w600)),
                   ),
-            ],
-          ),
-        ),
-          
-        Padding(
-          padding: const EdgeInsets.only(left: 19 , top: 20),
-          child: Row(
-            children: [
-              Container(
-                      height: 56,
-                      width: 349,
-                      child: TextFormField(
-                        maxLength: 25,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                        ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 19, top: 20),
+              child: Row(
+                children: [
+                  Container(
+                    height: 56,
+                    width: 349,
+                    child: TextFormField(
+                      controller: name,
+                      maxLength: 25,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
                       ),
                     ),
-                    SizedBox(
-                      width: 25,
+                  ),
+                  SizedBox(
+                    width: 25,
+                  ),
+                  Container(
+                    height: 56,
+                    width: 349,
+                    child: TextFormField(
+                      maxLength: 75,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
                     ),
-                     Container(
-                        height: 56,
-                        width: 349,
-                        child: TextFormField(
-                          maxLength: 75,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                      )
-            ],
-          ),
-        ),
-Padding(
-          padding: const EdgeInsets.only(top: 20 , left: 19),
-          child: Row(
-            children: [
-              SizedBox(
+                  )
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 20, left: 19),
+              child: Row(
+                children: [
+                  SizedBox(
                     height: 25,
                     width: 263,
                     child: Text("DEPARTMENT",
@@ -125,7 +130,7 @@ Padding(
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w600)),
                   ),
-                   SizedBox(
+                  SizedBox(
                     width: 112,
                   ),
                   SizedBox(
@@ -135,65 +140,66 @@ Padding(
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w600)),
                   ),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 20, left: 19),
-          child: Row(
-            children: [
-                Container(
-                        height: 56,
-                        width: 349,
-                        child: TextFormField(
-                          maxLength: 25,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 25,
-                      ),
-                       Container(
-                          height: 56,
-                          width: 349,
-                          child: TextFormField(
-                            maxLength: 75,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                        width: 25,
-                      ),
-                       Container(
-                          height: 56,
-                          width: 349,
-                          child: TextFormField(
-                            maxLength: 75,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
-                        ),
-            ],
+                ],
               ),
-        ),
-Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 42, left: 19),
-              child: Text("CONTACT INFORMATION",
-                  style: TextStyle(fontSize: 36, fontWeight: FontWeight.w600)),
             ),
-          ),
-          Padding(
-          padding: const EdgeInsets.only(top: 20 , left: 19),
-          child: Row(
-            children: [
-              SizedBox(
+            Padding(
+              padding: const EdgeInsets.only(top: 20, left: 19),
+              child: Row(
+                children: [
+                  Container(
+                    height: 56,
+                    width: 349,
+                    child: TextFormField(
+                      maxLength: 25,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 25,
+                  ),
+                  Container(
+                    height: 56,
+                    width: 349,
+                    child: TextFormField(
+                      maxLength: 75,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 25,
+                  ),
+                  Container(
+                    height: 56,
+                    width: 349,
+                    child: TextFormField(
+                      maxLength: 75,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 42, left: 19),
+                child: Text("CONTACT INFORMATION",
+                    style:
+                        TextStyle(fontSize: 36, fontWeight: FontWeight.w600)),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 20, left: 19),
+              child: Row(
+                children: [
+                  SizedBox(
                     height: 25,
                     width: 263,
                     child: Text("CONTACT NUMBER",
@@ -210,44 +216,42 @@ Align(
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w600)),
                   ),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 20 , left: 19),
-          child: Row(
-            children: [
-              Container(
-                        height: 46,
-                        width: 349,
-                        child: TextFormField(
-                         
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 20, left: 19),
+              child: Row(
+                children: [
+                  Container(
+                    height: 46,
+                    width: 349,
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
                       ),
-                      SizedBox(
-                        width: 25,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 25,
+                  ),
+                  Container(
+                    height: 46,
+                    width: 349,
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
                       ),
-                       Container(
-                          height: 46,
-                          width: 349,
-                          child: TextFormField(
-                           
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
-                        )
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 20 , left: 19),
-          child: Row(
-            children: [
-              SizedBox(
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 20, left: 19),
+              child: Row(
+                children: [
+                  SizedBox(
                     height: 25,
                     width: 263,
                     child: Text("ADDRESS LINE 1",
@@ -264,62 +268,79 @@ Align(
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w600)),
                   ),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 20 , left: 19),
-          child: Row(
-            children: [
-              Container(
-                        height: 46,
-                        width: 349,
-                        child: TextFormField(
-                         
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 20, left: 19),
+              child: Row(
+                children: [
+                  Container(
+                    height: 46,
+                    width: 349,
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
                       ),
-                      SizedBox(
-                        width: 25,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 25,
+                  ),
+                  Container(
+                    height: 46,
+                    width: 349,
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
                       ),
-                       Container(
-                          height: 46,
-                          width: 349,
-                          child: TextFormField(
-                           
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
-                        )
-            ],
-          ),
-        ),
-    Padding(
-      padding: const EdgeInsets.only(top: 25 , left: 19),
-      child: Container(
-        height: 60,
-        width: 435,
-        child: ElevatedButton(onPressed: (){},
-        style: ElevatedButton.styleFrom(
-          primary:Color.fromARGB(255, 2, 101, 251), // Background color
-          onPrimary: Colors.white, // Text color
-          padding: EdgeInsets.all(16), // Button padding
-          shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20), // Button border radius
-          ),
-        ), child:Text("SUBMIT") 
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 25, left: 19),
+              child: Container(
+                height: 60,
+                width: 435,
+                child: ElevatedButton(
+                    onPressed: () {
+                      addStudent();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary:
+                          Color.fromARGB(255, 2, 101, 251), // Background color
+                      onPrimary: Colors.white, // Text color
+                      padding: EdgeInsets.all(16), // Button padding
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(20), // Button border radius
+                      ),
+                    ),
+                    child: Text("SUBMIT")),
+              ),
+            )
+          ],
         ),
       ),
-    )
+    );
+  }
 
-     ],
-     
-
-     ),
-
-      );
+  void addStudent() async {
+    var url = "https://pacerlearninghub.onrender.com/studentProfile";
+    var data = {
+      'name': name.text,
+      'photo':
+          "http://res.cloudinary.com/di7hfwkes/image/upload/v1684765853/kcoazpjtzjrg00g8v7cg.png"
+    };
+    var bodyy = json.encode(data);
+    var urlParse = Uri.parse(url);
+    var response = await http.post(
+      urlParse,
+      body: bodyy,
+    );
+    var dataa = jsonDecode(response.body);
+    print(dataa);
   }
 }

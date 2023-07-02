@@ -44,19 +44,35 @@ class _TeacherState extends State<Teacher> {
         backgroundColor: Color.fromARGB(255, 255, 255, 255),
         body: Container(
           child: FutureBuilder<List>(
-              future: getTeacher(),
-              builder: (context, snapshot) {
-                print(snapshot.data);
-                if (snapshot.hasData) {
-                  return ListView.builder(
-                    itemBuilder: (context, i) {},
-                  );
-                } else {
-                  return const Center(
-                    child: Text("no data"),
-                  );
-                }
-              }),
+            future: getTeacher(),
+            builder: (context, snapshot) {
+              // print(snapshot.data);
+              if (snapshot.hasData) {
+                return ListView.builder(
+                  itemCount: snapshot.data?.length,
+                  itemBuilder: (context, i) {
+                    return DataTable(columns: const [
+                      DataColumn(label: Text("Name")),
+                      DataColumn(label: Text("Department")),
+                      DataColumn(label: Text("Phonenumber")),
+                      DataColumn(label: Text("Email")),
+                    ], rows: [
+                      DataRow(cells: [
+                        DataCell(Text(snapshot.data![i]['name'])),
+                        DataCell(Text(snapshot.data![i]['name'])),
+                        DataCell(Text(snapshot.data![i]['name'])),
+                        DataCell(Text(snapshot.data![i]['email'])),
+                      ])
+                    ]);
+                  },
+                );
+              } else {
+                return const Center(
+                  child: Text('No Data Found'),
+                );
+              }
+            },
+          ),
         ));
   }
 
