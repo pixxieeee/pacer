@@ -3,6 +3,7 @@ import 'package:pacers_portal/common/dashboard/admin_home.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:pacers_portal/components/drawer.dart';
+import 'package:dio/dio.dart';
 
 const List<String> dept = <String>['Computer', 'Mechanical', 'ETC', 'IT'];
 
@@ -14,7 +15,16 @@ class StudentForm extends StatefulWidget {
 }
 
 class _StudentFormState extends State<StudentForm> {
-  TextEditingController name = TextEditingController();
+  final dio = Dio();
+  TextEditingController fname = TextEditingController();
+  TextEditingController lname = TextEditingController();
+  TextEditingController dept = TextEditingController();
+  TextEditingController gender = TextEditingController();
+  TextEditingController dob = TextEditingController();
+  TextEditingController phone = TextEditingController();
+  TextEditingController email = TextEditingController();
+  TextEditingController add1 = TextEditingController();
+  TextEditingController add2 = TextEditingController();
   String? dropdownValue;
   @override
   Widget build(BuildContext context) {
@@ -86,7 +96,7 @@ class _StudentFormState extends State<StudentForm> {
                     height: 56,
                     width: 349,
                     child: TextFormField(
-                      controller: name,
+                      controller: fname,
                       maxLength: 25,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
@@ -100,6 +110,7 @@ class _StudentFormState extends State<StudentForm> {
                     height: 56,
                     width: 349,
                     child: TextFormField(
+                      controller: lname,
                       maxLength: 75,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
@@ -151,6 +162,7 @@ class _StudentFormState extends State<StudentForm> {
                     height: 56,
                     width: 349,
                     child: TextFormField(
+                      controller: dept,
                       maxLength: 25,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
@@ -164,6 +176,7 @@ class _StudentFormState extends State<StudentForm> {
                     height: 56,
                     width: 349,
                     child: TextFormField(
+                      controller: gender,
                       maxLength: 75,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
@@ -177,6 +190,7 @@ class _StudentFormState extends State<StudentForm> {
                     height: 56,
                     width: 349,
                     child: TextFormField(
+                      controller: dob,
                       maxLength: 75,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
@@ -227,6 +241,7 @@ class _StudentFormState extends State<StudentForm> {
                     height: 46,
                     width: 349,
                     child: TextFormField(
+                      controller: phone,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                       ),
@@ -239,6 +254,7 @@ class _StudentFormState extends State<StudentForm> {
                     height: 46,
                     width: 349,
                     child: TextFormField(
+                      controller: email,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                       ),
@@ -279,6 +295,7 @@ class _StudentFormState extends State<StudentForm> {
                     height: 46,
                     width: 349,
                     child: TextFormField(
+                      controller: add1,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                       ),
@@ -291,6 +308,7 @@ class _StudentFormState extends State<StudentForm> {
                     height: 46,
                     width: 349,
                     child: TextFormField(
+                      controller: add2,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                       ),
@@ -306,7 +324,8 @@ class _StudentFormState extends State<StudentForm> {
                 width: 435,
                 child: ElevatedButton(
                     onPressed: () {
-                      addStudent();
+                       addStudent();
+                 
                     },
                     style: ElevatedButton.styleFrom(
                       primary:
@@ -328,16 +347,18 @@ class _StudentFormState extends State<StudentForm> {
   }
 
   void addStudent() async {
-    var url = "https://pacerlearninghub.onrender.com/studentProfile";
+    var url = "http://localhost:8000/studentProfile";
     var data = {
-      'name': name.text,
-      'photo':
-          "http://res.cloudinary.com/di7hfwkes/image/upload/v1684765853/kcoazpjtzjrg00g8v7cg.png"
+      'name': fname.text,
+      'phoneno': phone.text,
+      'email': email.text,
+      'address': add1.text
     };
-    var bodyy = json.encode(data);
+    var bodyy = jsonEncode(data);
     var urlParse = Uri.parse(url);
     var response = await http.post(
       urlParse,
+      headers: { "accept": "application/json", "content-type": "application/json" },
       body: bodyy,
     );
     var dataa = jsonDecode(response.body);

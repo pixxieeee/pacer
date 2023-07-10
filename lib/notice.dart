@@ -21,19 +21,18 @@ class _NoticeState extends State<Notice> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(context,
-                    MaterialPageRoute(builder: ((context) => NoticeForm())));
+          Navigator.push(
+              context, MaterialPageRoute(builder: ((context) => NoticeForm())));
         },
         child: Icon(Icons.add),
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white, // Button padding
-                shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(20), // Button border radius
-                ),
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white, // Button padding
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20), // Button border radius
+        ),
       ),
       appBar: AppBar(
-         toolbarHeight: 106,
+        toolbarHeight: 106,
         backgroundColor: Color.fromARGB(255, 2, 101, 251),
         actions: [
           IconButton(
@@ -52,7 +51,6 @@ class _NoticeState extends State<Notice> {
               },
               icon: Icon(Icons.file_present)),
           Text(_fileText),
-          
         ],
       ),
     );
@@ -76,14 +74,5 @@ class _NoticeState extends State<Notice> {
         _fileText = _file.path;
       }));
     }
-  }
-
-  void _saveAs() async {
-    if (kIsWeb || Platform.isWindows) {
-      return;
-    }
-
-    String? outputFile =
-        await FilePicker.platform.saveFile(fileName: "output-file.pdf");
   }
 }

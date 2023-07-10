@@ -322,9 +322,7 @@ class _TeacherFormState extends State<TeacherForm> {
                 height: 30,
                 width: 135,
                 child: ElevatedButton(
-                    onPressed: () {
-                      addTeacher();
-                    },
+                    onPressed: addTeacher,
                     style: ElevatedButton.styleFrom(
                       primary:
                           Color.fromARGB(255, 255, 118, 67), // Background color
@@ -345,19 +343,18 @@ class _TeacherFormState extends State<TeacherForm> {
   }
 
   void addTeacher() async {
-    var url = "https://pacerlearninghub.onrender.com/teacherProfile";
+    var url = "http://localhost:8000/teacherProfile";
     var data = {
       'name': fname.text,
       'phoneno': phone.text,
-      'gender': gender.text,
-      'birthdate': dob.text,
       'email': email.text,
       'address': add1.text
     };
-    var bodyy = json.encode(data);
+    var bodyy = jsonEncode(data);
     var urlParse = Uri.parse(url);
     var response = await http.post(
       urlParse,
+      headers: { "accept": "application/json", "content-type": "application/json" },
       body: bodyy,
     );
     var dataa = jsonDecode(response.body);

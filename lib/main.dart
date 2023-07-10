@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pacers_portal/otp_verification.dart';
 
 
+
 void main() {
   runApp(MaterialApp(debugShowCheckedModeBanner: false, home: const MyApp()));
 }
@@ -94,7 +95,7 @@ class _MyAppState extends State<MyApp> {
                                     context,
                                     MaterialPageRoute(
                                         builder: ((context) =>
-                                          OtpVerification())));
+                                         OtpVerification() )));
                               },
                               child: Text(
                                 "LogIn",

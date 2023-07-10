@@ -42,42 +42,55 @@ class _TeacherState extends State<Teacher> {
         ),
         drawer: drawer(),
         backgroundColor: Color.fromARGB(255, 255, 255, 255),
-        body: Container(
-          child: FutureBuilder<List>(
-            future: getTeacher(),
-            builder: (context, snapshot) {
-              // print(snapshot.data);
-              if (snapshot.hasData) {
-                return ListView.builder(
-                  itemCount: snapshot.data?.length,
-                  itemBuilder: (context, i) {
-                    return DataTable(columns: const [
-                      DataColumn(label: Text("Name")),
-                      DataColumn(label: Text("Department")),
-                      DataColumn(label: Text("Phonenumber")),
-                      DataColumn(label: Text("Email")),
-                    ], rows: [
-                      DataRow(cells: [
-                        DataCell(Text(snapshot.data![i]['name'])),
-                        DataCell(Text(snapshot.data![i]['name'])),
-                        DataCell(Text(snapshot.data![i]['name'])),
-                        DataCell(Text(snapshot.data![i]['email'])),
-                      ])
-                    ]);
-                  },
-                );
-              } else {
-                return const Center(
-                  child: Text('No Data Found'),
-                );
-              }
-            },
+        body: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 25),
+          child: Container(
+            child: FutureBuilder<List>(
+              future: getTeacher(),
+              builder: (context, snapshot) {
+                // print(snapshot.data);
+                if (snapshot.hasData) {
+                  return ListView.builder(
+                    itemCount: snapshot.data?.length,
+                    itemBuilder: (context, i) {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            children: [
+                              Text(snapshot.data![i]['name']),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Text(snapshot.data![i]['address']),
+                            ],
+                          ),
+                           Column(
+                            children: [
+                              Text(snapshot.data![i]['pincode']),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Text(snapshot.data![i]['email']),
+                            ],
+                          )
+                        ],
+                      );
+                    },
+                  );
+                } else {
+                  return Center(child: CircularProgressIndicator());
+                }
+              },
+            ),
           ),
         ));
   }
 
   Future<List> getTeacher() async {
-    String baseUrl = "http://pacerlearninghub.onrender.com/teacherProfile";
+    String baseUrl = "http://127.0.0.1:8000/teacherProfile";
     try {
       var response = await http.get(Uri.parse(baseUrl));
       if (response.statusCode == 200) {

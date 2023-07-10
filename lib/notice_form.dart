@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:pacers_portal/common/dashboard/admin_home.dart';
-
+import 'package:file_picker/file_picker.dart';
 import 'package:pacers_portal/components/drawer.dart';
+import 'dart:io';
+import 'package:http/http.dart' as http;
 
 const List<String> dept = <String>['Computer', 'Mechanical', 'ETC', 'IT'];
 
@@ -138,26 +140,30 @@ class _NoticeFormState extends State<NoticeForm> {
                     ),
                     SizedBox(
                         height: 150), // Add some spacing between text boxes
-                    Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: SizedBox(
-                        height: 50,
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            primary: Color.fromARGB(
-                                255, 35, 122, 254), // Background color
-                            onPrimary: Colors.white, // Text color
-                            padding: EdgeInsets.all(16), // Button padding
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  15), // Button border radius
+                    Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: SizedBox(
+                            height: 50,
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () {},
+                              style: ElevatedButton.styleFrom(
+                                primary: Color.fromARGB(
+                                    255, 35, 122, 254), // Background color
+                                onPrimary: Colors.white, // Text color
+                                padding: EdgeInsets.all(16), // Button padding
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      15), // Button border radius
+                                ),
+                              ),
+                              child: Text('Select'),
                             ),
                           ),
-                          child: Text('Submit'),
                         ),
-                      ),
+                      ],
                     ),
                   ],
                 ),
@@ -196,7 +202,9 @@ class _NoticeFormState extends State<NoticeForm> {
                     height: 50,
                     width: 320,
                     child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          pickAndUploadFile();
+                        },
                         style: ElevatedButton.styleFrom(
                           primary: Color.fromARGB(
                               255, 35, 122, 254), // Background color
@@ -216,5 +224,35 @@ class _NoticeFormState extends State<NoticeForm> {
         ]),
       ),
     );
+  }
+
+  Future<void> uploadFile(File _fileText) async {
+    final url = 'http://localhost:8000/notice';
+
+    var request = http.MultipartRequest('POST', Uri.parse(url));
+    request.files.add(await http.MultipartFile.fromPath('_fileText', _fileText.path));
+
+    var response = await request.send();
+
+    if (response.statusCode == 200) {
+      print('File uploaded successfully');
+    } else {
+      print('Error uploading file. Status code: ${response.statusCode}');
+    }
+  }
+
+  void pickAndUploadFile() async {
+    FilePickerResult? result = await FilePicker.platform
+        .pickFiles(type: FileType.custom, allowedExtensions: ['pdf']);
+
+    if (result != null) {
+      File _fileText = File(result.files.single.path!);
+
+      // Send the file to the server
+      await uploadFile(_fileText);
+    } else {
+      // User canceled the file picking
+      print('File picking canceled.');
+    }
   }
 }
