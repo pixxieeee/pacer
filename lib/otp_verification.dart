@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:pacers_portal/common/dashboard/admin_home.dart';
-
+import 'package:pinput/pinput.dart';
+import 'package:pacers_portal/main.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class OtpVerification extends StatefulWidget {
   const OtpVerification({super.key});
@@ -12,6 +15,7 @@ class OtpVerification extends StatefulWidget {
 class _OtpVerificationState extends State<OtpVerification> {
   @override
   Widget build(BuildContext context) {
+    var code="";
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 255, 255, 255),
       appBar: AppBar(
@@ -19,118 +23,121 @@ class _OtpVerificationState extends State<OtpVerification> {
         backgroundColor: Color.fromARGB(255, 2, 101, 251),
         title: Text("Pacers Learning Hub"),
       ),
-    
+
       body: Container(
-       
-        decoration: BoxDecoration(
-              image: DecorationImage(image: AssetImage("assets/images/test3.jpg"),
-              fit: BoxFit.cover),
-        ),
-        child: Center(
-          child: Container(
-             
-            height: 250,
-            width: 300,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              color: Color.fromARGB(255, 255, 250, 248),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color.fromARGB(255, 236, 236, 234),
-                  blurRadius: 20.0,
-                )
-              ],
+        margin: EdgeInsets.symmetric(horizontal: 100, vertical: 50),
+        alignment: Alignment.center,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/images/image1.png',
+              width: 150,
+              height: 150,
             ),
-            child: Column(
-              children: [
-                
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20 , left:20,right: 20 , top: 20 ),
-                  child: Center(
-                    child: Text("Enter the OTP sent to your number",
-                                   textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 26,
-                      color: Color.fromARGB(255, 2, 101, 251),
-                      fontStyle: FontStyle.normal,
-                      fontWeight: FontWeight.bold
-                    ) ,),
+            SizedBox(height: 25),
+            Text(
+              "Phone Verification",
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 10),
+            Text(
+              "We need to register your phone without getting started!",
+              style: TextStyle(fontSize: 20),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 30),
+            Pinput(
+              length: 6,
+              onChanged: (value) {
+                code = value;
+              },
+              showCursor: true,
+              onCompleted: (pin) => print(pin),
+            ),
+            SizedBox(height: 20),
+            SizedBox(
+              width: 250,
+              height: 45,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color.fromARGB(255, 2, 101, 251),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 20,right: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        width: 30,
-                        child: TextFormField(
-                          autofocus: true,
-                          obscureText: true,
-                          keyboardType: TextInputType.number,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 30,
-                        child: TextFormField(
-                          autofocus: true,
-                          obscureText: true,
-                          keyboardType: TextInputType.number,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 30,
-                        child: TextFormField(
-                          autofocus: true,
-                          obscureText: true,
-                          keyboardType: TextInputType.number,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 30,
-                        child: TextFormField(
-                          autofocus: true,
-                          obscureText: true,
-                          keyboardType: TextInputType.number,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
-                  ),
+                onPressed: () async {
+                  print(code);
+                  final response = await http.post(
+                    Uri.parse('https://pacerlearninghub.onrender.com/auth/verifyOtpAdmin'),
+                    headers: {'Content-Type': 'application/json'},
+                    body: jsonEncode({
+                      'phoneno': MyApp.verify,
+                      'otp': code,
+                    }),
+                  );
+                  if (response.statusCode == 200) {
+                    print('Request sucess with status:-------------------------------------------------------------------------');
+                    final responseBody = jsonDecode(response.body);
+
+                    // Extract the token from the response
+                    final token = responseBody['token'];
+
+                    // Decode the JWT token
+                    final decodedToken = jsonDecode(utf8.decode(base64Url.decode(token.split('.')[1])));
+                    print(decodedToken);
+                    final id = decodedToken['id'];
+                    final phoneNumber = decodedToken['phoneno'];
+                    print('${id}//////////////////////////////////////////////////////////////////////////////////////////');
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => AdminHome(
+                        id: '${id}',
+                        phoneno:'${phoneNumber}',
+                      )),
+                    );
+                  } else {
+                    // Request failed
+                    print('Request failed with status: ${response.statusCode}');
+                  }
+                },
+                child: Text(
+                  "Verify Phone Number",
+                  style: TextStyle(fontSize: 16),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(left: 20, right: 20, top: 30),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      style: TextButton.styleFrom(
-                        backgroundColor:  Color.fromARGB(255, 35, 122, 254),
-                        foregroundColor: Color.fromARGB(255, 109, 119, 133),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15)),
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: ((context) => AdminHome())));
-                      },
-                      child: Text("LogIn",
-                      style: TextStyle(
-                        color: Colors.white
-                      ),),
+              ),
+            ),
+            SizedBox(height: 10),
+            TextButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MyApp(
+                      // id: '',
+                      // phoneno: '',
+                      // attendance: 100,
                     ),
                   ),
-                )
-              ],
+                );
+              },
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => MyApp()),
+                  );
+                },
+                child: Text(
+                  "Edit Phone Number ?",
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
             ),
-          ),
+          ],
         ),
       ),
+
     );
   }
 }

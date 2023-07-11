@@ -37,7 +37,8 @@ class _StudentState extends State<Student> {
             IconButton(
                 onPressed: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: ((context) => AdminHome())));
+                      MaterialPageRoute(builder: ((context) => AdminHome(
+                      ))));
                 },
                 icon: Icon(Icons.arrow_back_ios))
           ],

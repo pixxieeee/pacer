@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pacers_portal/otp_verification.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 void main() {
   runApp(MaterialApp(debugShowCheckedModeBanner: false, home: const MyApp()));
@@ -8,12 +9,20 @@ void main() {
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
+  static String verify = "";
 
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
+  TextEditingController countryController = TextEditingController();
+  var phone = "";
+  @override
+  void initState() {
+    countryController.text = "+91";
+    super.initState();
+  }
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -30,90 +39,127 @@ class _MyAppState extends State<MyApp> {
               fontStyle: FontStyle.normal),
         ),
       ),
-      body: Align(
-        alignment: Alignment.centerLeft,
-        child: Padding(
-          padding: const EdgeInsets.only(top: 50, left: 50),
-          child: Row(
-            children: [
-              Column(
-                children: [
-                  SizedBox(
-                    height: 80,
-                  ),
-                  Container(
-                    height: 432,
-                    width: 444,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: Color.fromARGB(255, 255, 250, 248),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color.fromARGB(255, 236, 236, 234),
-                          blurRadius: 20.0,
-                        )
-                      ],
+      body: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Container(
+              margin: EdgeInsets.only(left: 25, right: 25),
+              alignment: Alignment.center,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 25,
                     ),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20),
-                          child: CircleAvatar(
-                             radius: 80,
-                          backgroundImage: AssetImage("assets/images/test1.png")
+                    Text(
+                      "Phone Verification",
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      "We need to login with your registered phone",
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Container(
+                      height: 55,
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 1, color: Colors.grey),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 10,
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              left: 20, right: 20, top: 75),
-                          child: TextFormField(
-                            decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15)),
-                                hintText: "Enter your Number",
-                                hintStyle: TextStyle(fontSize: 20)),
-                          ),
-                        ),
-                        Padding(
-                          padding:
-                              EdgeInsets.only(left: 20, right: 20, top: 20),
-                          child: SizedBox(
-                            width: double.infinity,
-                            height: 50,
-                            child: ElevatedButton(
-                              style: TextButton.styleFrom(
-                                backgroundColor:
-                                    Color.fromARGB(255, 35, 122, 254),
-                                foregroundColor:
-                                    Color.fromARGB(255, 109, 119, 133),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15)),
-                              ),
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: ((context) =>
-                                          OtpVerification())));
-                              },
-                              child: Text(
-                                "LogIn",
-                                style: TextStyle(color: Colors.white),
+                          SizedBox(
+                            width: 40,
+                            child: TextField(
+                              controller: countryController,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
                               ),
                             ),
                           ),
-                        )
-                      ],
+                          Text(
+                            "|",
+                            style: TextStyle(fontSize: 33, color: Colors.grey),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: TextField(
+                              onChanged: (value) {
+                                 phone = value;
+                              },
+                              keyboardType: TextInputType.phone,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: "Phone",
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                    SizedBox(
+                      height: 20,
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 45,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color.fromARGB(255, 2, 101, 251),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        onPressed: () async {
+                          final response = await http.post(
+                            Uri.parse('https://pacerlearninghub.onrender.com/auth/sendOtpAdmin'),
+                            headers: {'Content-Type': 'application/json'},
+                            body: jsonEncode({
+                              'phoneno': '${countryController.text + phone}',
+                            }),
+                          );
+                          if (response.statusCode == 200) {
+                            print('Request sucess with status:-------------------------------------------------------------------------');
+                            MyApp.verify= '${countryController.text + phone}';
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>OtpVerification(),));
+                          } else {
+                            // Request failed
+                            print('Request failed with status: ${response.statusCode}');
+                          }
+                        },
+                        child: Text("Send the code"),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              SizedBox(width: 90,),
-              Image.asset("assets/images/test.jpg" , width : 700,)
-            ],
+            ),
           ),
-        ),
+          Image.asset(
+            "assets/images/test.jpg",
+            fit: BoxFit.cover,
+            width: 1000, // Adjust the width as needed
+          ),
+        ],
       ),
+
     );
   }
 }

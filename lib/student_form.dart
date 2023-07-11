@@ -27,7 +27,8 @@ class _StudentFormState extends State<StudentForm> {
           IconButton(
               onPressed: () {
                 Navigator.push(context,
-                    MaterialPageRoute(builder: ((context) => AdminHome())));
+                    MaterialPageRoute(builder: ((context) => AdminHome(
+                    ))));
               },
               icon: Icon(Icons.arrow_back_ios))
         ],

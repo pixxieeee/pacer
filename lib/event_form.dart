@@ -25,7 +25,8 @@ class _EventFormState extends State<EventForm> {
           IconButton(
               onPressed: () {
                 Navigator.push(context,
-                    MaterialPageRoute(builder: ((context) => AdminHome())));
+                    MaterialPageRoute(builder: ((context) => AdminHome(
+                    ))));
               },
               icon: Icon(Icons.arrow_back_ios))
         ],
