@@ -3,7 +3,7 @@ import 'package:pacers_portal/common/dashboard/calendar_widget.dart';
 import 'package:pacers_portal/common/dashboard/hod_details.dart';
 import 'package:pacers_portal/common/dashboard/profile_widget.dart';
 import 'package:pacers_portal/components/drawer.dart';
-import 'package:pacers_portal/main.dart';
+import 'package:pacers_portal/sendOtp.dart';
 import 'package:pacers_portal/otp_verification.dart';
 
 class AdminHome extends StatefulWidget {

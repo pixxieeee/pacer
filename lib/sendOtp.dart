@@ -17,11 +17,45 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   TextEditingController countryController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  bool isPhoneNumberValid = false;
   var phone = "";
   @override
   void initState() {
     countryController.text = "+91";
     super.initState();
+  }
+  Future<void> sendVerificationCode() async {
+    final response = await http.post(
+      Uri.parse('https://pacerlearninghub.onrender.com/auth/sendOtpAdmin'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'phoneno': '${countryController.text + phoneController.text}',
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      print('Request success with status: ${response.statusCode}');
+      MyApp.verify= '${countryController.text + phoneController.text}';
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>OtpVerification(),));
+    } else {
+      print('Request failed with status: ${response.statusCode}');
+      // Handle request failure
+    }
+  }
+
+  void validatePhoneNumber() {
+    final String phoneNumber = phoneController.text.trim();
+
+    if (phoneNumber.length == 10) {
+      setState(() {
+        isPhoneNumberValid = true;
+      });
+    } else {
+      setState(() {
+        isPhoneNumberValid = false;
+      });
+    }
   }
   // This widget is the root of your application.
   @override
@@ -100,9 +134,10 @@ class _MyAppState extends State<MyApp> {
                             width: 10,
                           ),
                           Expanded(
-                            child: TextField(
+                            child: TextFormField(
+                              controller: phoneController,
                               onChanged: (value) {
-                                 phone = value;
+                                validatePhoneNumber();
                               },
                               keyboardType: TextInputType.phone,
                               decoration: InputDecoration(
@@ -127,23 +162,7 @@ class _MyAppState extends State<MyApp> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        onPressed: () async {
-                          final response = await http.post(
-                            Uri.parse('https://pacerlearninghub.onrender.com/auth/sendOtpAdmin'),
-                            headers: {'Content-Type': 'application/json'},
-                            body: jsonEncode({
-                              'phoneno': '${countryController.text + phone}',
-                            }),
-                          );
-                          if (response.statusCode == 200) {
-                            print('Request sucess with status:-------------------------------------------------------------------------');
-                            MyApp.verify= '${countryController.text + phone}';
-                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>OtpVerification(),));
-                          } else {
-                            // Request failed
-                            print('Request failed with status: ${response.statusCode}');
-                          }
-                        },
+                        onPressed: isPhoneNumberValid ? sendVerificationCode : null,
                         child: Text("Send the code"),
                       ),
                     ),
