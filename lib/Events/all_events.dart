@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pacers_portal/components/drawer.dart';
-import 'package:pacers_portal/event_form.dart';
+import 'package:pacers_portal/Events/event_form.dart';
 
 class AllEvents extends StatefulWidget {
   const AllEvents({super.key});

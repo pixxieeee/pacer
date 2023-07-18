@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 //import 'package:pacers_portal/add_events.dart';
-import 'package:pacers_portal/all_events.dart';
-import 'package:pacers_portal/notice.dart';
-import 'package:pacers_portal/student.dart';
+import 'package:pacers_portal/Events/all_events.dart';
+import 'package:pacers_portal/Events/events.dart';
+//import 'package:pacers_portal/common/dashboard/calendar_widget.dart';
+import 'package:pacers_portal/feedback/tr_feedback.dart';
+import 'package:pacers_portal/listevent.dart';
+import 'package:pacers_portal/notices/notice.dart';
+import 'package:pacers_portal/students/student.dart';
 import 'package:pacers_portal/teacher.dart';
 
 class drawer extends StatefulWidget {
@@ -30,7 +34,6 @@ class _drawerState extends State<drawer> {
             accountEmail: Text('priyanka.talwarb@gmail.com'),
             decoration: BoxDecoration(
               color: Color.fromARGB(255, 2, 101, 251),
-              
             ),
           ),
           ListTile(
@@ -63,31 +66,33 @@ class _drawerState extends State<drawer> {
             title: Text("Notice"),
           ),
           ListTile(
-            leading: Icon(Icons.feedback_outlined),
-            onTap: () {},
-            title: Text("Feedback"),
-          ),
-          ListTile(
             leading: Icon(Icons.event_note),
             onTap: () {
               Navigator.push(context,
-                  MaterialPageRoute(builder: ((context) => AllEvents())));
+                  MaterialPageRoute(builder: ((context) => Eventslist())));
             },
             title: Text("Event"),
           ),
-           Padding(
-             padding: const EdgeInsets.only(top: 200),
-             child: Align(
+           ListTile(
+            leading: Icon(Icons.feedback_outlined),
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: ((context) => GoogleFormScreen())));
+            },
+            title: Text("FeedBack"),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 200),
+            child: Align(
               alignment: Alignment.bottomLeft,
-               child: Image.asset(
-                  "assets/images/test.jpg",
-                  fit: BoxFit.fill,
-                  height: 250,
-                  width: double.infinity,
-                ),
-             ),
-           ),
-
+              child: Image.asset(
+                "assets/images/test.jpg",
+                fit: BoxFit.fill,
+                height: 250,
+                width: double.infinity,
+              ),
+            ),
+          ),
         ],
       ),
     );

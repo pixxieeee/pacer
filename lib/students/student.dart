@@ -2,7 +2,7 @@ import "package:flutter/material.dart";
 import 'package:pacers_portal/common/dashboard/admin_home.dart';
 //import 'package:pacers_portal/dash/dashboard/admin_home.dart';
 import 'package:pacers_portal/components/drawer.dart';
-import 'package:pacers_portal/student_form.dart';
+import 'package:pacers_portal/students/student_form.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
