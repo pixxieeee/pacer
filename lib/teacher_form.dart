@@ -1,30 +1,113 @@
-import 'package:flutter/material.dart';
-import 'package:pacers_portal/common/dashboard/admin_home.dart';
-//import 'package:pacers_portal/dash/dashboard/admin_home.dart';
-import 'package:pacers_portal/components/drawer.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
-
-const List<String> dept = <String>['Computer', 'Mechanical', 'ETC', 'IT'];
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:pacers_portal/common/dashboard/admin_home.dart';
+import 'package:pacers_portal/components/drawer.dart';
 
 class TeacherForm extends StatefulWidget {
-  const TeacherForm({super.key});
-
   @override
-  State<TeacherForm> createState() => _TeacherFormState();
+  _TeacherFormState createState() => _TeacherFormState();
 }
 
 class _TeacherFormState extends State<TeacherForm> {
-  TextEditingController fname = TextEditingController();
-  TextEditingController lname = TextEditingController();
-  TextEditingController dept = TextEditingController();
-  TextEditingController gender = TextEditingController();
-  TextEditingController dob = TextEditingController();
-  TextEditingController phone = TextEditingController();
-  TextEditingController email = TextEditingController();
-  TextEditingController add1 = TextEditingController();
-  TextEditingController add2 = TextEditingController();
-  String? dropdownValue;
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController phonenoController = TextEditingController();
+  TextEditingController genderController = TextEditingController();
+  TextEditingController birthdateController = TextEditingController();
+  TextEditingController departmentController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
+  TextEditingController cityController = TextEditingController();
+  TextEditingController stateController = TextEditingController();
+  TextEditingController pincodeController = TextEditingController();
+  File? selectedImage;
+
+  Future<void> postStudentData() async {
+    final url = Uri.parse('http://localhost:8000/teacherProfile');
+
+    final request = http.MultipartRequest('POST', url);
+    final headers = {'Content-Type': 'multipart/form-data'};
+
+    final data = {
+      //  'year_id': '<YEAR_ID>',
+      'name': nameController.text,
+      'phoneno': phonenoController.text,
+      'gender': genderController.text,
+      'birthdate': birthdateController.text,
+      // 'department_id': '<DEPARTMENT_ID>',
+      'email': emailController.text,
+      'address': addressController.text,
+      'city': cityController.text,
+      'state': stateController.text,
+      'pincode': pincodeController.text,
+    };
+
+    request.headers.addAll(headers);
+    request.fields.addAll(data);
+
+    if (selectedImage != null) {
+      final fileStream = http.ByteStream(selectedImage!.openRead());
+      final fileLength = await selectedImage!.length();
+      final fileName = selectedImage!.path.split('/').last;
+
+      final multipartFile = http.MultipartFile(
+        'photo',
+        fileStream,
+        fileLength,
+        filename: fileName,
+        contentType: MediaType('image', 'jpeg'),
+      );
+
+      request.files.add(multipartFile);
+    }
+
+    final response = await http.Response.fromStream(await request.send());
+
+    if (response.statusCode == 200) {
+      // Student data posted successfully
+      print('Student data posted successfully');
+      // Reset the form and selected image
+      _formKey.currentState!.reset();
+      setState(() {
+        selectedImage = null;
+      });
+    } else {
+      // Handle error response
+      print('Error: ${response.statusCode}');
+    }
+  }
+
+  Future<void> pickImage() async {
+    final imagePicker = ImagePicker();
+    final pickedImage =
+        await imagePicker.pickImage(source: ImageSource.gallery);
+
+    if (pickedImage != null) {
+      setState(() {
+        selectedImage = File(pickedImage.path);
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    phonenoController.dispose();
+    genderController.dispose();
+    birthdateController.dispose();
+    departmentController.dispose();
+    emailController.dispose();
+    addressController.dispose();
+    cityController.dispose();
+    stateController.dispose();
+    pincodeController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,322 +125,94 @@ class _TeacherFormState extends State<TeacherForm> {
         ],
       ),
       drawer: drawer(),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 42, left: 19),
-                child: Text("NEW TEACHER",
-                    style:
-                        TextStyle(fontSize: 36, fontWeight: FontWeight.w600)),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              GestureDetector(
+                onTap: pickImage,
+                child: Container(
+                  width: 150,
+                  height: 150,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(75),
+                  ),
+                  child: selectedImage != null
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(75),
+                          child: Image.file(selectedImage!, fit: BoxFit.cover),
+                        )
+                      : Icon(Icons.camera_alt, size: 50),
+                ),
               ),
-            ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 10, left: 19),
-                child: Text("BASIC INFORMATION",
-                    style:
-                        TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+              TextFormField(
+                controller: nameController,
+                decoration: InputDecoration(labelText: 'Name'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a name';
+                  }
+                  return null;
+                },
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 20, left: 19),
-              child: Row(
-                children: [
-                  SizedBox(
-                    height: 25,
-                    width: 263,
-                    child: Text("FIRSTNAME",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w600)),
-                  ),
-                  SizedBox(
-                    width: 105,
-                  ),
-                  SizedBox(
-                    height: 25,
-                    width: 263,
-                    child: Text("LASTNAME",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w600)),
-                  ),
-                ],
+              TextFormField(
+                controller: phonenoController,
+                decoration: InputDecoration(labelText: 'Phone Number'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a phone number';
+                  }
+                  return null;
+                },
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 19, top: 20),
-              child: Row(
-                children: [
-                  Container(
-                    height: 56,
-                    width: 349,
-                    child: TextFormField(
-                      controller: fname,
-                      maxLength: 25,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 25,
-                  ),
-                  Container(
-                    height: 56,
-                    width: 349,
-                    child: TextFormField(
-                      controller: lname,
-                      maxLength: 75,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  )
-                ],
+              TextFormField(
+                controller: genderController,
+                decoration: InputDecoration(labelText: 'Gender'),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 20, left: 19),
-              child: Row(
-                children: [
-                  SizedBox(
-                    height: 25,
-                    width: 263,
-                    child: Text("DEPARTMENT",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w600)),
-                  ),
-                  SizedBox(
-                    width: 102,
-                  ),
-                  SizedBox(
-                    height: 25,
-                    width: 263,
-                    child: Text("GENDER",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w600)),
-                  ),
-                  SizedBox(
-                    width: 112,
-                  ),
-                  SizedBox(
-                    height: 25,
-                    width: 263,
-                    child: Text("DATE OF BIRTH",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w600)),
-                  ),
-                ],
+              TextFormField(
+                controller: birthdateController,
+                decoration: InputDecoration(labelText: 'Birthdate'),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 20, left: 19),
-              child: Row(
-                children: [
-                  Container(
-                    height: 56,
-                    width: 349,
-                    child: TextFormField(
-                      controller: dept,
-                      maxLength: 25,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 25,
-                  ),
-                  Container(
-                    height: 56,
-                    width: 349,
-                    child: TextFormField(
-                      controller: gender,
-                      maxLength: 75,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 25,
-                  ),
-                  Container(
-                    height: 56,
-                    width: 349,
-                    child: TextFormField(
-                      controller: dob,
-                      maxLength: 75,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                ],
+              TextFormField(
+                controller: departmentController,
+                decoration: InputDecoration(labelText: 'Department'),
               ),
-            ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 42, left: 19),
-                child: Text("CONTACT INFORMATION",
-                    style:
-                        TextStyle(fontSize: 36, fontWeight: FontWeight.w600)),
+              TextFormField(
+                controller: emailController,
+                decoration: InputDecoration(labelText: 'Email'),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 20, left: 19),
-              child: Row(
-                children: [
-                  SizedBox(
-                    height: 25,
-                    width: 263,
-                    child: Text("CONTACT NUMBER",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w600)),
-                  ),
-                  SizedBox(
-                    width: 105,
-                  ),
-                  SizedBox(
-                    height: 25,
-                    width: 263,
-                    child: Text("EMAIL ID",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w600)),
-                  ),
-                ],
+              TextFormField(
+                controller: addressController,
+                decoration: InputDecoration(labelText: 'Address'),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 20, left: 19),
-              child: Row(
-                children: [
-                  Container(
-                    height: 46,
-                    width: 349,
-                    child: TextFormField(
-                      controller: phone,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 25,
-                  ),
-                  Container(
-                    height: 46,
-                    width: 349,
-                    child: TextFormField(
-                      controller: email,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  )
-                ],
+              TextFormField(
+                controller: cityController,
+                decoration: InputDecoration(labelText: 'City'),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 20, left: 19),
-              child: Row(
-                children: [
-                  SizedBox(
-                    height: 25,
-                    width: 263,
-                    child: Text("ADDRESS LINE 1",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w600)),
-                  ),
-                  SizedBox(
-                    width: 105,
-                  ),
-                  SizedBox(
-                    height: 25,
-                    width: 263,
-                    child: Text("ADDRESS LINE 2",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w600)),
-                  ),
-                ],
+              TextFormField(
+                controller: stateController,
+                decoration: InputDecoration(labelText: 'State'),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 20, left: 19),
-              child: Row(
-                children: [
-                  Container(
-                    height: 46,
-                    width: 349,
-                    child: TextFormField(
-                      controller: add1,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 25,
-                  ),
-                  Container(
-                    height: 46,
-                    width: 349,
-                    child: TextFormField(
-                      controller: add2,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  )
-                ],
+              TextFormField(
+                controller: pincodeController,
+                decoration: InputDecoration(labelText: 'Pincode'),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 25, left: 19),
-              child: Container(
-                height: 30,
-                width: 135,
-                child: ElevatedButton(
-                    onPressed: addTeacher,
-                    style: ElevatedButton.styleFrom(
-                      primary:
-                          Color.fromARGB(255, 255, 118, 67), // Background color
-                      onPrimary: Colors.white, // Text color
-                      padding: EdgeInsets.all(16), // Button padding
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(20), // Button border radius
-                      ),
-                    ),
-                    child: Text("SUBMIT")),
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    postStudentData();
+                  }
+                },
+                child: Text('Submit'),
               ),
-            )
-          ],
+            ],
+          ),
         ),
       ),
     );
-  }
-
-  void addTeacher() async {
-    var url = "http://localhost:8000/teacherProfile";
-    var data = {
-      'name': fname.text,
-      'phoneno': phone.text,
-      'email': email.text,
-      'address': add1.text
-    };
-    var bodyy = jsonEncode(data);
-    var urlParse = Uri.parse(url);
-    var response = await http.post(
-      urlParse,
-      headers: { "accept": "application/json", "content-type": "application/json" },
-      body: bodyy,
-    );
-    var dataa = jsonDecode(response.body);
-    print(dataa);
   }
 }

@@ -1,26 +1,44 @@
 import 'package:flutter/material.dart';
-import 'package:pacers_portal/common/dashboard/admin_home.dart';
-//import 'package:pacers_portal/dash/dashboard/admin_home.dart';
-import 'package:pacers_portal/components/drawer.dart';
-import 'package:pacers_portal/teacher_form.dart';
 import 'package:http/http.dart' as http;
+import 'package:pacers_portal/common/dashboard/admin_home.dart';
+import 'package:pacers_portal/components/drawer.dart';
+import 'package:pacers_portal/students/student_form.dart';
 import 'dart:convert';
 
 class Teacher extends StatefulWidget {
-  const Teacher({Key? key}) : super(key: key);
-
   @override
-  State<Teacher> createState() => _TeacherState();
+  _TeacherState createState() => _TeacherState();
 }
 
 class _TeacherState extends State<Teacher> {
+  List<dynamic> teacherData = [];
+
+  Future<void> fetchTeacherData() async {
+    final response = await http.get(Uri.parse('http://localhost:8000/teacherProfile'));
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      setState(() {
+        teacherData = data;
+      });
+    } else {
+      // Handle error response
+      print('Error: ${response.statusCode}');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchTeacherData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        floatingActionButton: FloatingActionButton(
+       floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => TeacherForm()));
+                MaterialPageRoute(builder: (context) => StudentForm()));
           },
           child: Icon(Icons.add),
           backgroundColor: Colors.blue,
@@ -41,65 +59,58 @@ class _TeacherState extends State<Teacher> {
           ],
         ),
         drawer: drawer(),
-        backgroundColor: Color.fromARGB(255, 255, 255, 255),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 25),
-          child: Container(
-            child: FutureBuilder<List>(
-              future: getTeacher(),
-              builder: (context, snapshot) {
-                // print(snapshot.data);
-                if (snapshot.hasData) {
-                  return ListView.builder(
-                    itemCount: snapshot.data?.length,
-                    itemBuilder: (context, i) {
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            children: [
-                              Text(snapshot.data![i]['name']),
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              Text(snapshot.data![i]['address']),
-                            ],
-                          ),
-                           Column(
-                            children: [
-                              Text(snapshot.data![i]['pincode']),
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              Text(snapshot.data![i]['email']),
-                            ],
+      body: SingleChildScrollView(
+        child: FittedBox(
+          child: DataTable(
+            columns: [
+              DataColumn(label: Text('Index')),
+              DataColumn(label: Text('Name')),
+              DataColumn(label: Text('Department')),
+              DataColumn(label: Text('Phone')),
+              DataColumn(label: Text('Gender')),
+              DataColumn(label: Text('Birthdate')),
+              DataColumn(label: Text('Email')),
+              DataColumn(label: Text('Address')),
+              DataColumn(label: Text('City')),
+              DataColumn(label: Text('State')),
+              DataColumn(label: Text('Pincode')),
+              DataColumn(label: Text('Image')),
+            ],
+            rows: teacherData.asMap().entries.map((entry) {
+              final index = entry.key + 1;
+              final teacher = entry.value;
+        
+            //  final yearId = teacher['year_id'] != null ? teacher['year_id']['year'] : '';
+              final departmentId = teacher['department_id'] != null ? teacher['department_id']['name'] : '';
+        
+              return DataRow(
+                cells: [
+                  DataCell(Text(index.toString())),
+                  DataCell(Text(teacher['name'] ?? '')),
+                  DataCell(Text(departmentId ?? '')),
+                  DataCell(Text(teacher['phoneno'] ?? '')),
+                  DataCell(Text(teacher['gender'] ?? '')),
+                  DataCell(Text(teacher['birthdate'] ?? '')),
+                  DataCell(Text(teacher['email'] ?? '')),
+                  DataCell(Text(teacher['address'] ?? '')),
+                  DataCell(Text(teacher['city'] ?? '')),
+                  DataCell(Text(teacher['state'] ?? '')),
+                  DataCell(Text(teacher['pincode'] != null ? teacher['pincode'].toString() : '')),
+                  DataCell(
+                    teacher['imagepath'] != null
+                        ? Image.network(
+                            teacher['imagepath'],
+                            width: 50,
+                            height: 50,
                           )
-                        ],
-                      );
-                    },
-                  );
-                } else {
-                  return Center(child: CircularProgressIndicator());
-                }
-              },
-            ),
+                        : SizedBox(),
+                  ),
+                ],
+              );
+            }).toList(),
           ),
-        ));
-  }
-
-  Future<List> getTeacher() async {
-    String baseUrl = "http://127.0.0.1:8000/teacherProfile";
-    try {
-      var response = await http.get(Uri.parse(baseUrl));
-      if (response.statusCode == 200) {
-        return json.decode(response.body);
-      } else {
-        return Future.error("Server error");
-      }
-    } catch (e) {
-      return Future.error(e);
-    }
+        ),
+      ),
+    );
   }
 }

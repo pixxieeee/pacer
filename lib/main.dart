@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:pacers_portal/otp_verification.dart';
+import 'package:desktop_window/desktop_window.dart';
 
 
 
 void main() {
+   WidgetsFlutterBinding.ensureInitialized();
+  DesktopWindow.setMinWindowSize(const Size(800, 600));
   runApp(MaterialApp(debugShowCheckedModeBanner: false, home: const MyApp()));
 }
 

@@ -1,33 +1,48 @@
-import "package:flutter/material.dart";
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:pacers_portal/common/dashboard/admin_home.dart';
-//import 'package:pacers_portal/dash/dashboard/admin_home.dart';
 import 'package:pacers_portal/components/drawer.dart';
 import 'package:pacers_portal/students/student_form.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class Student extends StatefulWidget {
-  const Student({super.key});
-
   @override
-  State<Student> createState() => _StudentState();
+  _StudentState createState() => _StudentState();
 }
 
 class _StudentState extends State<Student> {
+  List<dynamic> teacherData = [];
+
+  Future<void> fetchTeacherData() async {
+    final response = await http.get(Uri.parse('http://localhost:8000/studentProfile'));
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      setState(() {
+        teacherData = data;
+      });
+    } else {
+      // Handle error response
+      print('Error: ${response.statusCode}');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    getAllStudents();
+    fetchTeacherData();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        floatingActionButton: FloatingActionButton(
+       floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => StudentForm()));
           },
+          child: Icon(Icons.add),
+          backgroundColor: Colors.blue,
+          foregroundColor: Colors.white, // Button padding
         ),
         appBar: AppBar(
           toolbarHeight: 106,
@@ -35,57 +50,73 @@ class _StudentState extends State<Student> {
           title: Text("Pacers Learning Hub"),
           actions: [
             IconButton(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: ((context) => AdminHome())));
-                },
-                icon: Icon(Icons.arrow_back_ios))
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AdminHome()));
+              },
+              icon: Icon(Icons.arrow_back_ios),
+            ),
           ],
         ),
         drawer: drawer(),
-        backgroundColor: Color.fromARGB(255, 255, 255, 255),
-        body: Container(
-          width: double.infinity,
-          child: FutureBuilder<List>(
-            future: getAllStudents(),
-            builder: (context, snapshot) {
-              return DataTable(
-                columns: [
-                  DataColumn(label: Text("ID")),
-                  DataColumn(label: Text("Name")),
-                  DataColumn(label: Text("Department")),
-                  DataColumn(label: Text("RollNo")),
-                  DataColumn(label: Text("Email")),
-                  DataColumn(label: Text("Action"))
-                ],
-                rows: [
-                  DataRow(cells: [
-                    DataCell(Text("1")),
-                    DataCell(Text("priyanka")),
-                    DataCell(Text("Computer")),
-                    DataCell(Text("19CE43")),
-                    DataCell(Text("Priyanka.talwarb@gmail.com")),
-                    DataCell(Icon(Icons.edit)),
-                  ])
-                  
+      body: SingleChildScrollView(
+        child: FittedBox(
+          child: DataTable(
+            columns: [
+              DataColumn(label: Text('Index')),
+              DataColumn(label: Text('Name')),
+              DataColumn(label: Text('Department')),
+              DataColumn(label: Text('Phone')),
+              DataColumn(label: Text('Gender')),
+              DataColumn(label: Text('Birthdate')),
+              DataColumn(label: Text('Email')),
+              DataColumn(label: Text('Address')),
+              DataColumn(label: Text('City')),
+              DataColumn(label: Text('State')),
+              DataColumn(label: Text('Pincode')),
+              DataColumn(label: Text('Image')),
+              DataColumn(label: Text('Average Attendance')),
+              DataColumn(label: Text('Total Classes')),
+              DataColumn(label: Text('Total Present')),
+            ],
+            rows: teacherData.asMap().entries.map((entry) {
+              final index = entry.key + 1;
+              final teacher = entry.value;
+        
+              final yearId = teacher['year_id'] != null ? teacher['year_id']['year'] : '';
+              final departmentId = teacher['department_id'] != null ? teacher['department_id']['name'] : '';
+        
+              return DataRow(
+                cells: [
+                  DataCell(Text(index.toString())),
+                  DataCell(Text(teacher['name'] ?? '')),
+                  DataCell(Text(departmentId ?? '')),
+                  DataCell(Text(teacher['phoneno'] ?? '')),
+                  DataCell(Text(teacher['gender'] ?? '')),
+                  DataCell(Text(teacher['birthdate'] ?? '')),
+                  DataCell(Text(teacher['email'] ?? '')),
+                  DataCell(Text(teacher['address'] ?? '')),
+                  DataCell(Text(teacher['city'] ?? '')),
+                  DataCell(Text(teacher['state'] ?? '')),
+                  DataCell(Text(teacher['pincode'] != null ? teacher['pincode'].toString() : '')),
+                  DataCell(
+                    teacher['imagepath'] != null
+                        ? Image.network(
+                            teacher['imagepath'],
+                            width: 50,
+                            height: 50,
+                          )
+                        : SizedBox(),
+                  ),
+                  DataCell(Text(teacher['averageAttendance'] != null ? teacher['averageAttendance'].toString() : '')),
+                  DataCell(Text(teacher['totalClasses'] != null ? teacher['totalClasses'].toString() : '')),
+                  DataCell(Text(teacher['totalPresent'] != null ? teacher['totalPresent'].toString() : '')),
                 ],
               );
-            },
+            }).toList(),
           ),
-        ));
-  }
-
-  Future<List> getAllStudents() async {
-    try {
-      var response = await http.get(
-          Uri.parse("https://pacerlearninghub.onrender.com/studentProfile"));
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body);
-      } else {
-        return Future.error("error");
-      }
-    } catch (e) {
-      return Future.error(e);
-    }
+        ),
+      ),
+    );
   }
 }

@@ -1,223 +1,206 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:image_cropper/image_cropper.dart';
 
-// import '../../providers/auth.dart';
-// import '../../providers/post_provider.dart';
-
-class ServiceProviderAddPostScreen extends StatefulWidget {
-  const ServiceProviderAddPostScreen({super.key});
-  static const routeName = '/AddPostScreen';
-
+class TeacherTable extends StatefulWidget {
   @override
-  State<ServiceProviderAddPostScreen> createState() =>
-      _ServiceProviderAddPostScreenState();
+  _TeacherTableState createState() => _TeacherTableState();
 }
 
-class _ServiceProviderAddPostScreenState
-    extends State<ServiceProviderAddPostScreen> {
-  var serviceProviderPostDetails = {
-    'postImagePath': '',
-    'postCaption': '',
-    'userId': ''
-  };
-
+class _TeacherTableState extends State<TeacherTable> {
   final _formKey = GlobalKey<FormState>();
-  FocusNode focusPostCaptionNode = FocusNode();
-  XFile? _imageFile;
-  final ImagePicker _picker = ImagePicker();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController phonenoController = TextEditingController();
+  TextEditingController genderController = TextEditingController();
+  TextEditingController birthdateController = TextEditingController();
+  TextEditingController departmentController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
+  TextEditingController cityController = TextEditingController();
+  TextEditingController stateController = TextEditingController();
+  TextEditingController pincodeController = TextEditingController();
+  File? selectedImage;
+
+  Future<void> postStudentData() async {
+    final url = Uri.parse('http://localhost:8000/studentProfile');
+
+    final request = http.MultipartRequest('POST', url);
+    final headers = {'Content-Type': 'multipart/form-data'};
+
+    final data = {
+    //  'year_id': '<YEAR_ID>',
+      'name': nameController.text,
+      'phoneno': phonenoController.text,
+      'gender': genderController.text,
+      'birthdate': birthdateController.text,
+     // 'department_id': '<DEPARTMENT_ID>',
+      'email': emailController.text,
+      'address': addressController.text,
+      'city': cityController.text,
+      'state': stateController.text,
+      'pincode': pincodeController.text,
+    };
+
+    request.headers.addAll(headers);
+    request.fields.addAll(data);
+
+    if (selectedImage != null) {
+      final fileStream = http.ByteStream(selectedImage!.openRead());
+      final fileLength = await selectedImage!.length();
+      final fileName = selectedImage!.path.split('/').last;
+
+      final multipartFile = http.MultipartFile(
+        'photo',
+        fileStream,
+        fileLength,
+        filename: fileName,
+        contentType: MediaType('image', 'jpeg'),
+      );
+
+      request.files.add(multipartFile);
+    }
+
+    final response = await http.Response.fromStream(await request.send());
+
+    if (response.statusCode == 200) {
+      // Student data posted successfully
+      print('Student data posted successfully');
+      // Reset the form and selected image
+      _formKey.currentState!.reset();
+      setState(() {
+        selectedImage = null;
+      });
+    } else {
+      // Handle error response
+      print('Error: ${response.statusCode}');
+    }
+  }
+
+  Future<void> pickImage() async {
+    final imagePicker = ImagePicker();
+    final pickedImage = await imagePicker.pickImage(source: ImageSource.gallery);
+
+    if (pickedImage != null) {
+      setState(() {
+        selectedImage = File(pickedImage.path);
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    phonenoController.dispose();
+    genderController.dispose();
+    birthdateController.dispose();
+    departmentController.dispose();
+    emailController.dispose();
+    addressController.dispose();
+    cityController.dispose();
+    stateController.dispose();
+    pincodeController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    var userId = Provider.of(context, listen: false).userId;
-    serviceProviderPostDetails['userId'] = userId!;
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).primaryColor,
-        title: const Text("Add Post"),
+        title: Text('Student Form'),
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Form(
-            key: _formKey,
-            child: Container(
-              margin: const EdgeInsets.fromLTRB(30, 30, 30, 0),
-              child: Column(children: [
-                const SizedBox(height: 60),
-                Container(
-                  child: imageProfile(),
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return "";
-                    }
-                    return null;
-                  },
-                  focusNode: focusPostCaptionNode,
-                  autovalidateMode: focusPostCaptionNode.hasFocus
-                      ? AutovalidateMode.onUserInteraction
-                      : AutovalidateMode.disabled,
-                  onSaved: (value) {
-                    serviceProviderPostDetails['postCaption'] = value!;
-                  },
-                  decoration: InputDecoration(
-                    labelText: 'Enter caption',
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(4),
-                    ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              GestureDetector(
+                onTap: pickImage,
+                child: Container(
+                  width: 150,
+                  height: 150,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(75),
                   ),
+                  child: selectedImage != null
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(75),
+                          child: Image.file(selectedImage!, fit: BoxFit.cover),
+                        )
+                      : Icon(Icons.camera_alt, size: 50),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  height: 50,
-                  width: MediaQuery.of(context).size.width,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate() &&
-                          serviceProviderPostDetails['postImagePath'] != '') {
-                        _formKey.currentState!.save();
-                        debugPrint("---------$serviceProviderPostDetails");
-                      }
-
-                      Provider.of(context, listen: false)
-                          .addPost(serviceProviderPostDetails);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                  //    backgroundColor: Theme.of(context).accentColor,
-                    ),
-                    child: const Text("Post",
-                        style: TextStyle(color: Color.fromRGBO(10, 25, 49, 1))),
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-              ]),
-            ),
+              ),
+              TextFormField(
+                controller: nameController,
+                decoration: InputDecoration(labelText: 'Name'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a name';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: phonenoController,
+                decoration: InputDecoration(labelText: 'Phone Number'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a phone number';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: genderController,
+                decoration: InputDecoration(labelText: 'Gender'),
+              ),
+              TextFormField(
+                controller: birthdateController,
+                decoration: InputDecoration(labelText: 'Birthdate'),
+              ),
+              TextFormField(
+                controller: departmentController,
+                decoration: InputDecoration(labelText: 'Department'),
+              ),
+              TextFormField(
+                controller: emailController,
+                decoration: InputDecoration(labelText: 'Email'),
+              ),
+              TextFormField(
+                controller: addressController,
+                decoration: InputDecoration(labelText: 'Address'),
+              ),
+              TextFormField(
+                controller: cityController,
+                decoration: InputDecoration(labelText: 'City'),
+              ),
+              TextFormField(
+                controller: stateController,
+                decoration: InputDecoration(labelText: 'State'),
+              ),
+              TextFormField(
+                controller: pincodeController,
+                decoration: InputDecoration(labelText: 'Pincode'),
+              ),
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    postStudentData();
+                  }
+                },
+                child: Text('Submit'),
+              ),
+            ],
           ),
         ),
       ),
     );
-  }
-
-  Widget addImage() {
-    return Container(
-        height: 125, // MediaQuery.of(context).size.height,
-        width: 500, // MediaQuery.of(context).size.width,
-        margin: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 20,
-        ),
-        child: Column(
-          children: [
-            const Text("Choose image"),
-            const SizedBox(
-              height: 20,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton.icon(
-                    style: ButtonStyle(
-                        backgroundColor: MaterialStateColor.resolveWith(
-                            (states) => const Color.fromRGBO(10, 25, 49, 1))),
-                    onPressed: () {
-                      takePhoto(ImageSource.camera);
-                    },
-                    icon: const Icon(Icons.camera),
-                    label: const Text("Camera")),
-                const SizedBox(
-                  width: 50,
-                ),
-                ElevatedButton.icon(
-                    style: ButtonStyle(
-                        backgroundColor: MaterialStateColor.resolveWith(
-                            (states) => const Color.fromRGBO(10, 25, 49, 1))),
-                    onPressed: () {
-                      takePhoto(ImageSource.gallery);
-                    },
-                    icon: const Icon(Icons.image),
-                    label: const Text("Gallery")),
-              ],
-            )
-          ],
-        ));
-  }
-
-  Widget imageProfile() {
-    return Center(
-      child: Stack(
-        children: [
-          SizedBox(
-            height: MediaQuery.of(context).size.width / 1.15,
-            width: MediaQuery.of(context).size.width / 1.15,
-            child: _imageFile == null
-                ? Container(
-                    decoration: const BoxDecoration(
-                        color: Color.fromARGB(255, 211, 209, 209)),
-                    child: const Center(child: Icon(Icons.image_search)),
-                  )
-                : Image.file(File(_imageFile!.path)),
-          ),
-          Positioned(
-            bottom: 0,
-            width: MediaQuery.of(context).size.width / 1.15,
-            child: Builder(
-                builder: (context) => InkWell(
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          builder: ((context) => addImage()),
-                          isDismissible: true,
-                        );
-                      },
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: const BoxDecoration(
-                            color: Color.fromRGBO(10, 25, 49, 1)),
-                        child: const Icon(Icons.camera_alt_rounded,
-                            color: Colors.white, size: 28),
-                      ),
-                    )),
-          )
-        ],
-      ),
-    );
-  }
-
-  void takePhoto(ImageSource source) async {
-    XFile? file = await _picker.pickImage(source: source);
-    if (file == null) {
-      Navigator.pop(context);
-    } else {
-      if (mounted) {
-        CroppedFile? croppedImage = await ImageCropper().cropImage(
-          sourcePath: file.path,
-          aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
-          aspectRatioPresets: [CropAspectRatioPreset.square],
-        );
-        setState(() {
-          if (croppedImage == null) {
-            Navigator.pop(context);
-          } else {
-            _imageFile = XFile(croppedImage.path);
-            serviceProviderPostDetails['postImagePath'] = _imageFile!.path;
-            Navigator.pop(context);
-          }
-        });
-      }
-    }
   }
 }
+
+
