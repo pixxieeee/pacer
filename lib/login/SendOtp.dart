@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:pacers_portal/otp_verification.dart';
+import 'package:pacers_portal/login/VerifyOtp.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
-void main() {
-  runApp(MaterialApp(debugShowCheckedModeBanner: false, home: const MyApp()));
-}
+import 'dart:async';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -19,7 +16,9 @@ class _MyAppState extends State<MyApp> {
   TextEditingController countryController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   bool isPhoneNumberValid = false;
+  bool isButtonDisabled = false;
   var phone = "";
+
   @override
   void initState() {
     countryController.text = "+91";
@@ -57,7 +56,20 @@ class _MyAppState extends State<MyApp> {
       });
     }
   }
-  // This widget is the root of your application.
+
+  void startButtonTimer() {
+    setState(() {
+      isButtonDisabled = true;
+    });
+
+    Timer(Duration(minutes: 1), () {
+      setState(() {
+        isButtonDisabled = false;
+      });
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -162,7 +174,10 @@ class _MyAppState extends State<MyApp> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        onPressed: isPhoneNumberValid ? sendVerificationCode : null,
+                        onPressed: isPhoneNumberValid && !isButtonDisabled ? () {
+                          sendVerificationCode();
+                          startButtonTimer();
+                        } : null,
                         child: Text("Send the code"),
                       ),
                     ),
@@ -178,7 +193,6 @@ class _MyAppState extends State<MyApp> {
           ),
         ],
       ),
-
     );
   }
 }

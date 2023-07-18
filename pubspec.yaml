@@ -40,6 +40,7 @@ dependencies:
   http: ^1.1.0
   table_calendar: ^3.0.0
   provider: ^5.0.0
+  shared_preferences: ^2.2.0
   pinput: ^2.2.30
 
 dev_dependencies:

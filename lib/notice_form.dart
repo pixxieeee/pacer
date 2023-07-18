@@ -26,8 +26,6 @@ class _NoticeFormState extends State<NoticeForm> {
               onPressed: () {
                 Navigator.push(context,
                     MaterialPageRoute(builder: ((context) => AdminHome(
-                      id: '',
-                      phoneno: '',
                     ))));
               },
               icon: Icon(Icons.arrow_back_ios))

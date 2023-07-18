@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:pacers_portal/common/dashboard/admin_home.dart';
 import 'package:pinput/pinput.dart';
-import 'package:pacers_portal/sendOtp.dart';
+import 'package:pacers_portal/login/SendOtp.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OtpVerification extends StatefulWidget {
   const OtpVerification({super.key});
@@ -37,10 +38,12 @@ class _OtpVerificationState extends State<OtpVerification> {
       final id = decodedToken['id'];
       final phoneNumber = decodedToken['phoneno'];
       print('${id}');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', token);
+      await prefs.setString('id', id);
+      await prefs.setString('phoneno', phoneNumber);
       Navigator.pushReplacement(context, MaterialPageRoute(
           builder: (context) => AdminHome(
-            id: '${id}',
-            phoneno: '${phoneNumber}',
           ),),);
     } else {
       // Request failed
@@ -155,7 +158,6 @@ class _OtpVerificationState extends State<OtpVerification> {
           ],
         ),
       ),
-
     );
   }
 }
