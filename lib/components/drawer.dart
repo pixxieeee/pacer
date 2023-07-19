@@ -62,7 +62,7 @@ class _drawerState extends State<drawer> {
             leading: Icon(Icons.do_not_touch_outlined),
             onTap: () {
               Navigator.push(
-                  context, MaterialPageRoute(builder: ((context) => Notice())));
+                  context, MaterialPageRoute(builder: ((context) => NoticeScreen())));
             },
             title: Text("Notice"),
           ),

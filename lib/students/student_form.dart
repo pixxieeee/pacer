@@ -126,7 +126,7 @@ class _StudentFormState extends State<StudentForm> {
       ),
       drawer: drawer(),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(25.0),
         child: Form(
           key: _formKey,
           child: ListView(
@@ -135,7 +135,7 @@ class _StudentFormState extends State<StudentForm> {
                 onTap: pickImage,
                 child: Container(
                   width: 150,
-                  height: 150,
+                  height: 200,
                   decoration: BoxDecoration(
                     color: Colors.grey[200],
                     borderRadius: BorderRadius.circular(75),
@@ -200,14 +200,18 @@ class _StudentFormState extends State<StudentForm> {
                 controller: pincodeController,
                 decoration: InputDecoration(labelText: 'Pincode'),
               ),
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    postStudentData();
-                  }
-                },
-                child: Text('Submit'),
+              SizedBox(height: 25),
+              Container(
+                height: 50,
+                child: ElevatedButton(
+                  
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      postStudentData();
+                    }
+                  },
+                  child: Text('Submit'),
+                ),
               ),
             ],
           ),

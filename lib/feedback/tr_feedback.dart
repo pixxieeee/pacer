@@ -270,7 +270,7 @@ class GoogleFormScreen extends StatelessWidget {
   }
 void openGoogleForm() async {
   const url = 'https://docs.google.com/forms/d/e/1FAIpQLScjeAFSylzTPBGK5lN4di--STBvjbKQgutHpwEfJViWR82dZg/viewform?usp=sf_link';
-  await launch(url);
+  await launchUrl(Uri.parse(url));
 }
 
 

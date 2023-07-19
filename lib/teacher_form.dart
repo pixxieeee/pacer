@@ -126,7 +126,7 @@ class _TeacherFormState extends State<TeacherForm> {
       ),
       drawer: drawer(),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(25.0),
         child: Form(
           key: _formKey,
           child: ListView(
@@ -134,15 +134,15 @@ class _TeacherFormState extends State<TeacherForm> {
               GestureDetector(
                 onTap: pickImage,
                 child: Container(
-                  width: 150,
-                  height: 150,
+                  width: 10,
+                  height: 180,
                   decoration: BoxDecoration(
                     color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(75),
+                    borderRadius: BorderRadius.circular(15),
                   ),
                   child: selectedImage != null
                       ? ClipRRect(
-                          borderRadius: BorderRadius.circular(75),
+                          borderRadius: BorderRadius.circular(15),
                           child: Image.file(selectedImage!, fit: BoxFit.cover),
                         )
                       : Icon(Icons.camera_alt, size: 50),
