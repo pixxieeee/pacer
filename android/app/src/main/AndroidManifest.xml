@@ -1,7 +1,22 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.pacers_portal">
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/> 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <queries>
+        <!-- Add the URL schemes you want to support -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="http" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+        <!-- Add more schemes as needed -->
+    </queries>
    <application
         android:label="pacers_portal"
         android:name="${applicationName}"

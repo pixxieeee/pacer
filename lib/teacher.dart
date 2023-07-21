@@ -40,7 +40,7 @@ class _TeacherState extends State<Teacher> {
     }
 
     final deletedTeacher = filteredTeacherData[index];
-    final teacherId = deletedTeacher['id'];
+   // final teacherId = deletedTeacher['id'];
 
     final response = await http.delete(Uri.parse('http://localhost:8000/teacher/$index'));
     if (response.statusCode == 200) {
