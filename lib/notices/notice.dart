@@ -107,8 +107,14 @@ class _NoticeScreenState extends State<NoticeScreen> {
               controller: searchController,
               onChanged: searchNotices,
               decoration: InputDecoration(
-                labelText: 'Search by Name',
-              ),
+                  hintText: "Search By Name...",
+                  prefixIcon: Icon(Icons.search),
+            enabledBorder: OutlineInputBorder(
+              borderSide:
+            BorderSide(width: 3, color: Colors.blueAccent), 
+              borderRadius: BorderRadius.circular(50.0),
+            ),
+          ),
             ),
           ),
           Expanded(

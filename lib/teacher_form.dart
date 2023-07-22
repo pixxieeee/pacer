@@ -26,6 +26,14 @@ class _TeacherFormState extends State<TeacherForm> {
   TextEditingController pincodeController = TextEditingController();
   File? selectedImage;
 
+  String deptid() {
+    if (departmentController.text.toLowerCase() == 'Comp'.toLowerCase()) return '641e71a685c5a4ac252edf5f';
+    if (departmentController.text.toLowerCase() == 'Mech'.toLowerCase()) return '641e71ac85c5a4ac252edf61';
+    if (departmentController.text.toLowerCase() == 'IT'.toLowerCase()) return '641e71b285c5a4ac252edf63';
+    if (departmentController.text.toLowerCase() == 'ETC'.toLowerCase()) return '641e71b785c5a4ac252edf65';
+    return '641e71a685c5a4ac252edf5f';
+  }
+
   Future<void> postStudentData() async {
     final url = Uri.parse('http://localhost:8000/teacherProfile');
 
@@ -33,12 +41,12 @@ class _TeacherFormState extends State<TeacherForm> {
     final headers = {'Content-Type': 'multipart/form-data'};
 
     final data = {
-      //  'year_id': '<YEAR_ID>',
+      //'year_id': '<YEAR_ID>',
       'name': nameController.text,
       'phoneno': phonenoController.text,
       'gender': genderController.text,
       'birthdate': birthdateController.text,
-      // 'department_id': '<DEPARTMENT_ID>',
+      'department_id': deptid(),
       'email': emailController.text,
       'address': addressController.text,
       'city': cityController.text,
@@ -55,7 +63,7 @@ class _TeacherFormState extends State<TeacherForm> {
       final fileName = selectedImage!.path.split('/').last;
 
       final multipartFile = http.MultipartFile(
-        'photo',
+        'profilepic',
         fileStream,
         fileLength,
         filename: fileName,
@@ -69,7 +77,7 @@ class _TeacherFormState extends State<TeacherForm> {
 
     if (response.statusCode == 200) {
       // Student data posted successfully
-      print('Student data posted successfully');
+      print('Teacher data posted successfully');
       // Reset the form and selected image
       _formKey.currentState!.reset();
       setState(() {

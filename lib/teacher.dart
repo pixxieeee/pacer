@@ -21,7 +21,8 @@ class _TeacherState extends State<Teacher> {
   SortOrder sortOrder = SortOrder.ascending;
 
   Future<void> fetchTeacherData() async {
-    final response = await http.get(Uri.parse('http://localhost:8000/teacherProfile'));
+    final response =
+        await http.get(Uri.parse('http://localhost:8000/teacherProfile'));
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       setState(() {
@@ -40,9 +41,10 @@ class _TeacherState extends State<Teacher> {
     }
 
     final deletedTeacher = filteredTeacherData[index];
-   // final teacherId = deletedTeacher['id'];
-
-    final response = await http.delete(Uri.parse('http://localhost:8000/teacher/$index'));
+    final teacherId = deletedTeacher['_id'];
+    print(teacherId);
+    final response = await http
+        .delete(Uri.parse('http://localhost:8000/teacherProfile/$teacherId'));
     if (response.statusCode == 200) {
       setState(() {
         teacherData.remove(deletedTeacher);
@@ -58,8 +60,9 @@ class _TeacherState extends State<Teacher> {
   void sortTeacherData(int columnIndex) {
     setState(() {
       if (sortColumnIndex == columnIndex) {
-        sortOrder =
-            sortOrder == SortOrder.ascending ? SortOrder.descending : SortOrder.ascending;
+        sortOrder = sortOrder == SortOrder.ascending
+            ? SortOrder.descending
+            : SortOrder.ascending;
       } else {
         sortColumnIndex = columnIndex;
         sortOrder = SortOrder.ascending;
@@ -70,9 +73,13 @@ class _TeacherState extends State<Teacher> {
         final valueB = b.values.toList()[columnIndex];
 
         if (valueA is String && valueB is String) {
-          return sortOrder == SortOrder.ascending ? valueA.compareTo(valueB) : valueB.compareTo(valueA);
+          return sortOrder == SortOrder.ascending
+              ? valueA.compareTo(valueB)
+              : valueB.compareTo(valueA);
         } else if (valueA is DateTime && valueB is DateTime) {
-          return sortOrder == SortOrder.ascending ? valueA.compareTo(valueB) : valueB.compareTo(valueA);
+          return sortOrder == SortOrder.ascending
+              ? valueA.compareTo(valueB)
+              : valueB.compareTo(valueA);
         } else {
           return 0;
         }
@@ -125,7 +132,8 @@ class _TeacherState extends State<Teacher> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // Assuming TeacherForm is the form to add a new teacher
-          Navigator.push(context, MaterialPageRoute(builder: (context) => TeacherForm()));
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => TeacherForm()));
         },
         child: Icon(Icons.add),
         backgroundColor: Colors.blue,
@@ -138,7 +146,8 @@ class _TeacherState extends State<Teacher> {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => AdminHome()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => AdminHome()));
             },
             icon: Icon(Icons.arrow_back_ios),
           ),
@@ -152,12 +161,14 @@ class _TeacherState extends State<Teacher> {
               controller: searchController,
               onChanged: searchTeacherData,
               decoration: InputDecoration(
-                hintText: 'Search by name....',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
+                  hintText: "Search By Name...",
+                  prefixIcon: Icon(Icons.search),
+            enabledBorder: OutlineInputBorder(
+              borderSide:
+            BorderSide(width: 3, color: Colors.blueAccent), 
+              borderRadius: BorderRadius.circular(50.0),
+            ),
+          ),
             ),
           ),
           Expanded(
@@ -191,8 +202,9 @@ class _TeacherState extends State<Teacher> {
                     final index = entry.key;
                     final teacher = entry.value;
 
-                    final departmentId =
-                        teacher['department_id'] != null ? teacher['department_id']['name'] : '';
+                    final departmentId = teacher['department_id'] != null
+                        ? teacher['department_id']['name']
+                        : '';
 
                     return DataRow(
                       cells: [
@@ -206,7 +218,9 @@ class _TeacherState extends State<Teacher> {
                         DataCell(Text(teacher['address'] ?? '')),
                         DataCell(Text(teacher['city'] ?? '')),
                         DataCell(Text(teacher['state'] ?? '')),
-                        DataCell(Text(teacher['pincode'] != null ? teacher['pincode'].toString() : '')),
+                        DataCell(Text(teacher['pincode'] != null
+                            ? teacher['pincode'].toString()
+                            : '')),
                         DataCell(
                           teacher['imagepath'] != null
                               ? Image.network(
@@ -234,4 +248,3 @@ class _TeacherState extends State<Teacher> {
     );
   }
 }
-
