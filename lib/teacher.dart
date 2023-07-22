@@ -152,7 +152,7 @@ class _TeacherState extends State<Teacher> {
               controller: searchController,
               onChanged: searchTeacherData,
               decoration: InputDecoration(
-                hintText: 'Search by name...',
+                hintText: 'Search by name....',
                 prefixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
