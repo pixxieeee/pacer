@@ -4,16 +4,56 @@ import 'package:pacers_portal/common/dashboard/hod_details.dart';
 import 'package:pacers_portal/common/dashboard/profile_widget.dart';
 import 'package:pacers_portal/components/drawer.dart';
 import 'package:pacers_portal/main.dart';
-
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class AdminHome extends StatefulWidget {
-  const AdminHome({Key? key}) : super(key: key);
+  // final String? id;
+  // final String? phoneno;
+  //
+  // const AdminHome({
+  //   this.id,
+  //   this.phoneno,
+  //   Key? key,
+  // }) : super(key: key);
 
   @override
   State<AdminHome> createState() => _AdminHomeState();
 }
 
+Future<Map<String, dynamic>> fetchUserData() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? storedId = prefs.getString('id');
+
+  if (storedId != null) {
+    print('Stored ID is: $storedId');
+    final response = await http.get(Uri.parse('https://pacerlearninghub.onrender.com/teacherProfile/singleteacherinfo/$storedId'));
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data;
+    } else {
+      print('Request failed with status: ${response.statusCode}');
+      throw Exception('Failed to load user data');
+    }
+  } else {
+    print('Stored ID not found');
+    throw Exception('Stored ID not found');
+  }
+}
+
 class _AdminHomeState extends State<AdminHome> {
+
+  Future<void> logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => MyApp()),
+          (route) => false,
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,10 +72,7 @@ class _AdminHomeState extends State<AdminHome> {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => MyApp()),
-              );
+              logout();
             },
             icon: Icon(Icons.logout),
           )
@@ -106,15 +143,8 @@ class _AdminHomeState extends State<AdminHome> {
                 ],
               ),
             ),
-            
           ],
-          
-        
-
         ),
-          
-        
-        
       ),
     );
   }

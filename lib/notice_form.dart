@@ -5,14 +5,14 @@ import 'package:pacers_portal/components/drawer.dart';
 
 const List<String> dept = <String>['Computer', 'Mechanical', 'ETC', 'IT'];
 
-class EventForm extends StatefulWidget {
-  const EventForm({super.key});
+class NoticeForm extends StatefulWidget {
+  const NoticeForm({super.key});
 
   @override
-  State<EventForm> createState() => _EventFormState();
+  State<NoticeForm> createState() => _NoticeFormState();
 }
 
-class _EventFormState extends State<EventForm> {
+class _NoticeFormState extends State<NoticeForm> {
   String? dropdownValue;
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,7 @@ class _EventFormState extends State<EventForm> {
             alignment: Alignment.centerLeft,
             child: Padding(
               padding: const EdgeInsets.only(top: 42, left: 19),
-              child: Text(" ADD NEW EVENT",
+              child: Text(" ADD NEW NOTICE",
                   style: TextStyle(fontSize: 36, fontWeight: FontWeight.w600)),
             ),
           ),
@@ -145,18 +145,17 @@ class _EventFormState extends State<EventForm> {
                         height: 50,
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {
-                          },
+                          onPressed: () {},
                           style: ElevatedButton.styleFrom(
-                              primary: Color.fromARGB(
-                                  255, 35, 122, 254), // Background color
-                              onPrimary: Colors.white, // Text color
-                              padding: EdgeInsets.all(16), // Button padding
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    15), // Button border radius
-                              ),
+                            primary: Color.fromARGB(
+                                255, 35, 122, 254), // Background color
+                            onPrimary: Colors.white, // Text color
+                            padding: EdgeInsets.all(16), // Button padding
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  15), // Button border radius
                             ),
+                          ),
                           child: Text('Submit'),
                         ),
                       ),
