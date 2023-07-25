@@ -135,5 +135,3 @@ class _NoticeFormState extends State<NoticeForm> {
     );
   }
 }
-
-

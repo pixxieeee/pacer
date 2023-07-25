@@ -25,7 +25,7 @@ class _StudentState extends State<Student> {
       });
     } else {
       // Handle error response
-      print('Error: ${response.statusCode}');
+      print('Errorr: ${response.statusCode}');
     }
   }
 
