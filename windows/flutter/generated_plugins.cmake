@@ -3,10 +3,10 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  smart_auth
   desktop_window
   file_selector_windows
   flutter_secure_storage_windows
+  smart_auth
   url_launcher_windows
 )
 
