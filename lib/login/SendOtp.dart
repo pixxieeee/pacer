@@ -84,6 +84,7 @@ class _MyAppState extends State<MyApp> {
               fontWeight: FontWeight.w600,
               fontStyle: FontStyle.normal),
         ),
+        centerTitle: true,
       ),
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.start,

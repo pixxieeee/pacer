@@ -81,6 +81,7 @@ class _OtpVerificationState extends State<OtpVerification> {
          toolbarHeight: 106,
         backgroundColor: Color.fromARGB(255, 2, 101, 251),
         title: Text("Pacers Learning Hub"),
+        centerTitle: true,
       ),
 
       body: Container(

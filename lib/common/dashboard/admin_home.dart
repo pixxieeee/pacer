@@ -4,7 +4,6 @@ import 'package:pacers_portal/common/dashboard/hod_details.dart';
 import 'package:pacers_portal/common/dashboard/profile_widget.dart';
 import 'package:pacers_portal/components/drawer.dart';
 import 'package:pacers_portal/main.dart';
-import 'package:pacers_portal/login/VerifyOtp.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
